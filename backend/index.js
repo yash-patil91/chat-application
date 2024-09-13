@@ -8,7 +8,7 @@ const app = express();
 const server = http.createServer(app);
 const io = socketIo(server, {
     cors: {
-        origin: "*", // Enable CORS to allow connections from your frontend
+        origin: "*", 
         methods: ["GET", "POST"]
     }
 });
@@ -21,8 +21,8 @@ mongoose.connect('mongodb://localhost:27017/chat', {
 
 const messageSchema = new mongoose.Schema({
     content: String,
-    sender: String, // Username of the sender
-    receiver: String, // Username of the receiver
+    sender: String,
+    receiver: String, 
     timeStamp: { type: Date, default: Date.now }
 });
 
@@ -34,16 +34,16 @@ db.once('open', () => {
     console.log('MongoDB connected successfully');
 });
 
-// Manage socket connections
+
 io.on('connection', (socket) => {
     console.log('A user connected');
 
     socket.on('message', async ({ content, sender, receiver }) => {
-        // Save message in the database
+      
         const message = new Message({ content, sender, receiver });
         await message.save();
 
-        // Emit the message to the receiver only
+     
         socket.broadcast.emit(`message:${receiver}`, message);
     });
 
@@ -54,7 +54,7 @@ io.on('connection', (socket) => {
 
 app.use(express.json());
 
-// Fetch all messages between two users
+
 app.get('/api/messages/:sender/:receiver', async (req, res) => {
     const { sender, receiver } = req.params;
     try {
